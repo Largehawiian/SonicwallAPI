@@ -1,106 +1,56 @@
 function Set-SWGeoIP {
     <#
     .SYNOPSIS
-    Retrieve DNS configuration from SonicWall appliance.
+    Set Geo-IP configuration On a SonicWall appliance.
 
     .DESCRIPTION
-    This function gets DNS configuration from a SonicWall appliance.
+    This function sets GeoIP configuration on a SonicWall appliance.
 
     .EXAMPLE
-    Get-SWDns
+    Set-SwGeoIP -country "Brazil"
     Gets the SonicWall appliance DNS configuration.
     #>
     [CmdletBinding()]
     param (
-
+        [string]$Country
     )
     begin {
-    $GeoIPCountries = @(
-"United Arab Emirates",
-"Afghanistan",
-"Albania",
-"Armenia",
-"Azerbaijan",
-"Bosnia and Herzegovina",
-"Bangladesh",
-"Bulgaria",
-"Bahrain",
-"Burundi",
-"Benin",
-"Brunei Darussalam",
-"Brazil",
-"Bhutan",
-"Botswana",
-"Belarus",
-"Congo, The Democratic Republic of the",
-"Central African Republic",
-"Congo",
-"Cameroon",
-"China",
-"Colombia",
-"Cyprus",
-"Djibouti",
-"Algeria",
-"Egypt",
-"Eritrea",
-"Ethiopia",
-"Gabon",
-"Ghana",
-"Gambia",
-"Hungary",
-"Indonesia",
-"Iraq",
-"Iran, Islamic Republic of",
-"Jordan",
-"Kenya",
-"Kyrgyzstan",
-"Korea, Democratic People's Republic of",
-"Kuwait",
-"Kazakhstan",
-"Lao People's Democratic Republic",
-"Lebanon",
-"Libyan Arab Jamahiriya",
-"Morocco",
-"Mali",
-"Mongolia",
-"Mauritius",
-"Malawi",
-"Malaysia",
-"Mozambique",
-"Namibia",
-"Niger",
-"Nigeria",
-"Oman",
-"Philippines",
-"Pakistan",
-"Palestinian Territory",
-"Qatar",
-"Romania",
-"Serbia",
-"Russian Federation",
-"Rwanda",
-"Saudi Arabia",
-"Sudan",
-"Slovenia",
-"Slovakia",
-"Senegal",
-"Somalia",
-"Syrian Arab Republic",
-"Swaziland",
-"Chad",
-"Tajikistan",
-"Turkmenistan",
-"Turkey",
-"Taiwan",
-"Ukraine",
-"Uzbekistan",
-"Vietnam",
-"Yemen",
-"Zambia",
-"Zimbabwe"
-    )
+        # Testing if a connection to SonicWall exists
+       # Test-SWConnection
+
+        # Declaring used rest method
+        $Method = 'put'
+
+        # Declaring the base resource
+        $BaseResource = 'geo-ip/countries'
+
+        # Declaring the content type
+        $ContentType = 'application/json'
+
+        # Getting the base URL of our connection
+        $SWBaseUrl = $env:SWConnection
+
+        #Json Body
+        $json = @"
+          {
+            "geo_ip": {
+              "block": {
+                "country": [
+                  {
+                    "name": "$($Country)"
+                  }
+                ]
+              }
+            }
+          }
+"@
     }
     process {
-      $ExpectedConfig.GeoIP = $GeoIPCountries 
+        
+        $Resource = $BaseResource
+        $Result = (Invoke-RestMethod -Uri "$SWBaseUrl$Resource" -Method $Method -ContentType $ContentType -Body $Json)
+
+        # Return the result
+        return $Result
     }
 }
