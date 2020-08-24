@@ -77,7 +77,7 @@ FunctionsToExport = 'Connect-SWAppliance', 'Disconnect-SWAppliance', 'Get-SWAcce
                'Get-SWRoutePolicy', 'Get-SWSchedule', 'Get-SWSecServicesExpiration', 
                'Get-SWServiceGroup', 'Get-SWServiceObjects', 'Get-SWSNMP', 
                'Get-SWSystem', 'Get-SWTime', 'Get-SWUserSettings', 'Get-SWZone', 
-               'Set-SWGeoIP', 'Test-SWConnection'
+               'Set-SWGeoIP', 'Test-SWConnection','Write-SWConfig'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()

@@ -15,14 +15,11 @@ function Set-SWGeoIP {
         [string]$Country
     )
     begin {
-        # Testing if a connection to SonicWall exists
-       # Test-SWConnection
-
         # Declaring used rest method
         $Method = 'put'
 
         # Declaring the base resource
-        $BaseResource = 'geo-ip/countries'
+        $BaseResource = 'geo-ip'
 
         # Declaring the content type
         $ContentType = 'application/json'
@@ -31,24 +28,18 @@ function Set-SWGeoIP {
         $SWBaseUrl = $env:SWConnection
 
         #Json Body
-        $json = @"
-          {
-            "geo_ip": {
-              "block": {
-                "country": [
-                  {
-                    "name": "$($Country)"
+        $json = @{
+          geo_ip = @{
+              block = @{
+                  country = @{
+                      name = $Country
                   }
-                ]
               }
-            }
           }
-"@
+        } | ConvertTo-Json -Depth 4
     }
     process {
-        
-        $Resource = $BaseResource
-        $Result = (Invoke-RestMethod -Uri "$SWBaseUrl$Resource" -Method $Method -ContentType $ContentType -Body $Json)
+        $Result = Invoke-RestMethod -Uri "$SWBaseUrl$BaseResource" -Method $Method -ContentType $ContentType -Body $Json 
 
         # Return the result
         return $Result
