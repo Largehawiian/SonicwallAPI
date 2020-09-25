@@ -21,7 +21,9 @@ function Get-SWNatPolicy {
     param (
         # Version type for the query
         [ValidateSet('ipv4','ipv6','nat64','all')]
-        [string]$IpVersion ='ipv4'
+        [string]$IpVersion ='ipv4',
+        [bool]$ExcludeDefaultPolicies,
+        [string]$Name
     )
     begin {
         # Testing if a connection to SonicWall exists
@@ -56,6 +58,8 @@ function Get-SWNatPolicy {
             }
         }
         # Return the result
-        $Result
+        if ($ExcludeDefaultPolicies){$Result = $Result | Where-Object {$_.comment -notmatch "Auto-added" -and $_.comment -notmatch "Management NAT Policy" -and $_.comment -notmatch "Default NAT Policy"}}
+        elseif ($Name){$Result = $Result | Where-Object {$_.Name -match $Name}}
+        return $Result
     }
 }

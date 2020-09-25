@@ -21,8 +21,12 @@ function Get-SWAccessRule {
     [CmdletBinding()]
     param (
         # Version type for the query
-        [ValidateSet('ipv4','ipv6','all')]
-        [string]$IpVersion ='ipv4'
+        [ValidateSet('ipv4', 'ipv6', 'all')]
+        [string]$IpVersion = 'ipv4',
+        [String]$FromZone,
+        [String]$ToZone,
+        [string]$Action,
+        [bool]$Enabled
     )
     begin {
         # Testing if a connection to SonicWall exists
@@ -38,7 +42,7 @@ function Get-SWAccessRule {
         $ContentType = 'application/json'
 
         # Declaring IP Types
-        $IpVersions = 'ipv4','ipv6'
+        $IpVersions = 'ipv4', 'ipv6'
 
         # Getting the base URL of our connection
         $SWBaseUrl = $env:SWConnection
@@ -57,6 +61,12 @@ function Get-SWAccessRule {
             }
         }
         # Return the result
-        $Result
+        #$Result
+        if ($FromZone) { $Result = $Result | Where-Object { $_.from -eq "$FromZone" } }
+        if ($ToZone) { $Result = $Result | Where-Object { $_.to -eq $ToZone } }
+        elseif ($Action) { $Result = $Result | Where-Object { $_.action -eq $Action } }
+        elseif ($Enabled) { $Result = $Result | Where-Object { $_.Enable -eq "True" } }
+        return $Result
     }
+
 }
